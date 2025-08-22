@@ -26,6 +26,15 @@
         <artifactId>ojdbc11</artifactId>
         <version>23.3.0.23.09</version>
         </dependency>
+        
+        
+        <dependency>
+    <groupId>org.glassfish.jersey.media</groupId>
+    <artifactId>jersey-media-multipart</artifactId>
+    <version>3.0.18</version> <!-- ou la version correspondant à ton Jersey -->
+            <type>jar</type>
+        </dependency>
+
 
         
         <dependency>

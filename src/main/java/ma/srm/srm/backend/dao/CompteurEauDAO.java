@@ -22,29 +22,28 @@ public class CompteurEauDAO {
         return em.find(CompteurEau.class, id);
     }
 
-    public void save(CompteurEau compteur) {
+    public CompteurEau save(CompteurEau compteur) {
         em.persist(compteur);
+        em.flush(); // ⚡ génère l'ID immédiatement
+        return compteur;
     }
 
-  public void update(CompteurEau compteur) {
-    CompteurEau existing = findById(compteur.getId());
-    if (existing != null) {
-        // On met à jour seulement les champs modifiés
-        existing.setLatitude(compteur.getLatitude());
-        existing.setLongitude(compteur.getLongitude());
-
-        // ⚠️ ici tu peux aussi mettre à jour les autres champs si besoin
-        if (compteur.getNumero() != null) existing.setNumero(compteur.getNumero());
-        if (compteur.getDiametre() != null) existing.setDiametre(compteur.getDiametre());
-        if (compteur.getDatePose() != null) existing.setDatePose(compteur.getDatePose());
-        if (compteur.getType() != null) existing.setType(compteur.getType());
-        if (compteur.getUser() != null) existing.setUser(compteur.getUser());
-
-        em.merge(existing);
+    public void update(CompteurEau compteur) {
+        CompteurEau existing = findById(compteur.getId());
+        if (existing != null) {
+            if (compteur.getNumero() != null) existing.setNumero(compteur.getNumero());
+            if (compteur.getDiametre() != null) existing.setDiametre(compteur.getDiametre());
+            if (compteur.getDatePose() != null) existing.setDatePose(compteur.getDatePose());
+            if (compteur.getType() != null) existing.setType(compteur.getType());
+            if (compteur.getUser() != null) existing.setUser(compteur.getUser());
+            if (compteur.getLatitude() != null) existing.setLatitude(compteur.getLatitude());
+            if (compteur.getLongitude() != null) existing.setLongitude(compteur.getLongitude());
+            if (compteur.getPhoto() != null) existing.setPhoto(compteur.getPhoto());
+            em.merge(existing);
+        }
     }
-}       
-  
-     public void updatePosition(Long id, double latitude, double longitude) {
+
+    public void updatePosition(Long id, double latitude, double longitude) {
         CompteurEau existing = findById(id);
         if (existing != null) {
             existing.setLatitude(latitude);
@@ -53,11 +52,16 @@ public class CompteurEauDAO {
         }
     }
 
+    public void updatePhoto(Long id, byte[] photo) {
+        CompteurEau existing = findById(id);
+        if (existing != null) {
+            existing.setPhoto(photo);
+            em.merge(existing);
+        }
+    }
 
     public void delete(Long id) {
         CompteurEau c = findById(id);
-        if (c != null) {
-            em.remove(c);
-        }
+        if (c != null) em.remove(c);
     }
 }

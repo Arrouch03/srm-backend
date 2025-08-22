@@ -16,13 +16,14 @@ public class CompteurElectricite {
     
     @Column(name = "NB_FILS")
     private Integer nbFils;
+
     @Column(name = "NB_ROUES")
     private Integer nbRoues;
 
     @Column(length = 50)
     private String calibre;
 
-   @Column(name = "DATE_POSE")
+    @Column(name = "DATE_POSE")
     private Date datePose;
 
     // Relation avec User
@@ -38,11 +39,17 @@ public class CompteurElectricite {
     private Double longitude;
     private Double latitude;
 
+    // 📸 Nouvelle colonne pour stocker la photo
+    @Lob
+    @Column(name = "PHOTO")
+    private byte[] photo;
+
     // Constructeurs
     public CompteurElectricite() {}
 
     public CompteurElectricite(String numero, Integer nbFils, Integer nbRoues, String calibre,
-                               Date datePose, User user, CompteurType type, Double longitude, Double latitude) {
+                               Date datePose, User user, CompteurType type,
+                               Double longitude, Double latitude, byte[] photo) {
         this.numero = numero;
         this.nbFils = nbFils;
         this.nbRoues = nbRoues;
@@ -52,6 +59,7 @@ public class CompteurElectricite {
         this.type = type;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.photo = photo;
     }
 
     // Getters & Setters
@@ -84,4 +92,7 @@ public class CompteurElectricite {
 
     public Double getLatitude() { return latitude; }
     public void setLatitude(Double latitude) { this.latitude = latitude; }
+
+    public byte[] getPhoto() { return photo; }
+    public void setPhoto(byte[] photo) { this.photo = photo; }
 }

@@ -32,10 +32,16 @@ public class CompteurEau {
     private Double longitude;
     private Double latitude;
 
+    // Nouvelle colonne pour la photo
+    @Lob
+    @Column(name = "PHOTO")
+    private byte[] photo;
+
     // Constructeurs
     public CompteurEau() {}
 
-    public CompteurEau(String numero, Double diametre, Date datePose, User user, CompteurType type, Double longitude, Double latitude) {
+    public CompteurEau(String numero, Double diametre, Date datePose, User user, CompteurType type,
+                       Double longitude, Double latitude, byte[] photo) {
         this.numero = numero;
         this.diametre = diametre;
         this.datePose = datePose;
@@ -43,6 +49,7 @@ public class CompteurEau {
         this.type = type;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.photo = photo;
     }
 
     // Getters & Setters
@@ -69,4 +76,7 @@ public class CompteurEau {
 
     public Double getLatitude() { return latitude; }
     public void setLatitude(Double latitude) { this.latitude = latitude; }
+
+    public byte[] getPhoto() { return photo; }
+    public void setPhoto(byte[] photo) { this.photo = photo; }
 }
