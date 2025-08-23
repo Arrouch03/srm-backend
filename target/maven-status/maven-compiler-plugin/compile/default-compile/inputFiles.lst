@@ -1,6 +1,7 @@
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\resource\CompteurEauResource.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\resource\CompteurTypeResource.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\dao\CompteurEauDAO.java
+C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\resource\PlanificationResource.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\model\CompteurEau.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\model\User.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\OracleTest\TestOracle.java
@@ -10,10 +11,13 @@ C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\b
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\resources\JakartaEE10Resource.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\dto\CompteurDTO.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\JakartaRestConfiguration.java
+C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\model\Planification.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\resource\CompteurResource.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\dao\CompteurTypeDAO.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\model\CompteurType.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\model\CompteurElectricite.java
+C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\model\Secteur.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\resource\HelloResource.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\dao\CompteurElectriciteDAO.java
+C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\dao\PlanificationDAO.java
 C:\Users\moarr\Documents\NetBeansProjects\srm-backend\src\main\java\ma\srm\srm\backend\dao\UserDAO.java

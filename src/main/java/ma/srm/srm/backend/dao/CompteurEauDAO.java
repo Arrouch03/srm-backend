@@ -13,6 +13,9 @@ public class CompteurEauDAO {
     @PersistenceContext(unitName = "my_persistence_unit")
     private EntityManager em;
 
+    // -------------------------
+    // Méthodes CRUD de base
+    // -------------------------
     public List<CompteurEau> findAll() {
         return em.createQuery("SELECT c FROM CompteurEau c", CompteurEau.class)
                  .getResultList();
@@ -39,6 +42,8 @@ public class CompteurEauDAO {
             if (compteur.getLatitude() != null) existing.setLatitude(compteur.getLatitude());
             if (compteur.getLongitude() != null) existing.setLongitude(compteur.getLongitude());
             if (compteur.getPhoto() != null) existing.setPhoto(compteur.getPhoto());
+            if (compteur.getStatut() != null) existing.setStatut(compteur.getStatut());
+            if (compteur.getSecteur() != null) existing.setSecteur(compteur.getSecteur()); // ✅ ajout
             em.merge(existing);
         }
     }
@@ -63,5 +68,30 @@ public class CompteurEauDAO {
     public void delete(Long id) {
         CompteurEau c = findById(id);
         if (c != null) em.remove(c);
+    }
+
+    // -------------------------
+    // Méthodes de filtrage
+    // -------------------------
+    public List<CompteurEau> findBySecteur(Long secteurId) {
+        return em.createQuery(
+            "SELECT c FROM CompteurEau c WHERE c.secteur.id = :secteurId", CompteurEau.class)
+            .setParameter("secteurId", secteurId)
+            .getResultList();
+    }
+
+    public List<CompteurEau> findByStatut(String statut) {
+        return em.createQuery(
+            "SELECT c FROM CompteurEau c WHERE c.statut = :statut", CompteurEau.class)
+            .setParameter("statut", statut)
+            .getResultList();
+    }
+
+    public List<CompteurEau> findBySecteurAndStatut(Long secteurId, String statut) {
+        return em.createQuery(
+            "SELECT c FROM CompteurEau c WHERE c.secteur.id = :secteurId AND c.statut = :statut", CompteurEau.class)
+            .setParameter("secteurId", secteurId)
+            .setParameter("statut", statut)
+            .getResultList();
     }
 }

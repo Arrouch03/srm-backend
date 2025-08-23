@@ -32,16 +32,27 @@ public class CompteurEau {
     private Double longitude;
     private Double latitude;
 
-    // Nouvelle colonne pour la photo
+    // Photo du compteur
     @Lob
     @Column(name = "PHOTO")
     private byte[] photo;
 
+    // Statut du compteur (ex: Normal, À contrôler, Frauduleux)
+    @Column(name = "STATUT", length = 50)
+    private String statut;
+
+    // Relation avec Secteur
+    @ManyToOne
+    @JoinColumn(name = "SECTEUR_ID")
+    private Secteur secteur;
+
+    // -------------------------
     // Constructeurs
+    // -------------------------
     public CompteurEau() {}
 
     public CompteurEau(String numero, Double diametre, Date datePose, User user, CompteurType type,
-                       Double longitude, Double latitude, byte[] photo) {
+                       Double longitude, Double latitude, byte[] photo, String statut, Secteur secteur) {
         this.numero = numero;
         this.diametre = diametre;
         this.datePose = datePose;
@@ -50,9 +61,13 @@ public class CompteurEau {
         this.longitude = longitude;
         this.latitude = latitude;
         this.photo = photo;
+        this.statut = statut;
+        this.secteur = secteur;
     }
 
+    // -------------------------
     // Getters & Setters
+    // -------------------------
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -79,4 +94,10 @@ public class CompteurEau {
 
     public byte[] getPhoto() { return photo; }
     public void setPhoto(byte[] photo) { this.photo = photo; }
+
+    public String getStatut() { return statut; }
+    public void setStatut(String statut) { this.statut = statut; }
+
+    public Secteur getSecteur() { return secteur; }
+    public void setSecteur(Secteur secteur) { this.secteur = secteur; }
 }

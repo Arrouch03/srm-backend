@@ -6,6 +6,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.List;
+
 import ma.srm.srm.backend.dao.CompteurElectriciteDAO;
 import ma.srm.srm.backend.model.CompteurElectricite;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -19,7 +20,9 @@ public class CompteurElectriciteResource {
     @Inject
     private CompteurElectriciteDAO dao;
 
-    // 🔹 Liste des compteurs sans la photo
+    // -------------------------
+    // Liste de tous les compteurs sans photo
+    // -------------------------
     @GET
     public List<CompteurElectricite> getAll() {
         List<CompteurElectricite> list = dao.findAll();
@@ -27,18 +30,31 @@ public class CompteurElectriciteResource {
         return list;
     }
 
+    // -------------------------
+    // Compteur par ID
+    // -------------------------
     @GET
     @Path("/{id}")
     public CompteurElectricite getById(@PathParam("id") Long id) {
-        return dao.findById(id); // Ici la photo sera incluse si nécessaire
+        return dao.findById(id); // Photo incluse
     }
 
+    // -------------------------
+    // Création d’un compteur
+    // -------------------------
     @POST
     public Response create(CompteurElectricite compteur) {
+        if (compteur.getSecteur() == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Le secteur est obligatoire").build();
+        }
         CompteurElectricite saved = dao.save(compteur);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
+    // -------------------------
+    // Mise à jour
+    // -------------------------
     @PUT
     @Path("/{id}")
     public void update(@PathParam("id") Long id, CompteurElectricite compteur) {
@@ -46,18 +62,27 @@ public class CompteurElectriciteResource {
         dao.update(compteur);
     }
 
+    // -------------------------
+    // Suppression
+    // -------------------------
     @DELETE
     @Path("/{id}")
     public void delete(@PathParam("id") Long id) {
         dao.delete(id);
     }
 
+    // -------------------------
+    // Mise à jour de la position
+    // -------------------------
     @PUT
     @Path("/{id}/position")
     public void updatePosition(@PathParam("id") Long id, CompteurElectricite data) {
         dao.updatePosition(id, data.getLatitude(), data.getLongitude());
     }
 
+    // -------------------------
+    // Upload de photo
+    // -------------------------
     @POST
     @Path("/{id}/photo")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -77,5 +102,55 @@ public class CompteurElectriciteResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erreur lors de l'upload de la photo").build();
         }
+    }
+
+    // -------------------------
+    // Mise à jour du statut
+    // -------------------------
+    @PUT
+    @Path("/{id}/statut")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response updateStatut(@PathParam("id") Long id, String statut) {
+        CompteurElectricite existing = dao.findById(id);
+        if (existing == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        existing.setStatut(statut);
+        dao.update(existing);
+        return Response.ok().build();
+    }
+
+    // -------------------------
+    // Filtrage par secteur
+    // -------------------------
+    @GET
+    @Path("/secteur/{secteurId}")
+    public List<CompteurElectricite> getBySecteur(@PathParam("secteurId") Long secteurId) {
+        List<CompteurElectricite> list = dao.findBySecteur(secteurId);
+        list.forEach(c -> c.setPhoto(null));
+        return list;
+    }
+
+    // -------------------------
+    // Filtrage par statut
+    // -------------------------
+    @GET
+    @Path("/statut/{statut}")
+    public List<CompteurElectricite> getByStatut(@PathParam("statut") String statut) {
+        List<CompteurElectricite> list = dao.findByStatut(statut);
+        list.forEach(c -> c.setPhoto(null));
+        return list;
+    }
+
+    // -------------------------
+    // Filtrage par secteur et statut
+    // -------------------------
+    @GET
+    @Path("/secteur/{secteurId}/statut/{statut}")
+    public List<CompteurElectricite> getBySecteurAndStatut(@PathParam("secteurId") Long secteurId,
+                                                           @PathParam("statut") String statut) {
+        List<CompteurElectricite> list = dao.findBySecteurAndStatut(secteurId, statut);
+        list.forEach(c -> c.setPhoto(null));
+        return list;
     }
 }

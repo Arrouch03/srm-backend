@@ -1,8 +1,11 @@
 ma\srm\srm\backend\dao\CompteurTypeDAO.class
 ma\srm\srm\backend\resource\CompteurResource.class
+ma\srm\srm\backend\model\Secteur.class
 ma\srm\srm\backend\resource\CompteurElectriciteResource.class
 ma\srm\srm\backend\resource\UserResource.class
+ma\srm\srm\backend\model\Planification.class
 ma\srm\srm\backend\resource\CompteurTypeResource.class
+ma\srm\srm\backend\dao\PlanificationDAO.class
 ma\srm\srm\backend\dao\CompteurElectriciteDAO.class
 ma\srm\srm\backend\ApplicationConfig.class
 ma\srm\srm\backend\resource\CompteurEauResource.class
@@ -16,4 +19,5 @@ ma\srm\srm\backend\resources\JakartaEE10Resource.class
 ma\srm\srm\backend\model\CompteurElectricite.class
 ma\srm\srm\backend\OracleTest\TestOracle.class
 ma\srm\srm\backend\resource\HelloResource.class
+ma\srm\srm\backend\resource\PlanificationResource.class
 ma\srm\srm\backend\model\CompteurEau.class

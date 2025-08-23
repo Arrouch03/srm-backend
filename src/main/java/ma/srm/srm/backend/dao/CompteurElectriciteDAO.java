@@ -13,6 +13,9 @@ public class CompteurElectriciteDAO {
     @PersistenceContext(unitName = "my_persistence_unit")
     private EntityManager em;
 
+    // -------------------------
+    // Méthodes CRUD de base
+    // -------------------------
     public List<CompteurElectricite> findAll() {
         return em.createQuery("SELECT c FROM CompteurElectricite c", CompteurElectricite.class)
                  .getResultList();
@@ -24,7 +27,7 @@ public class CompteurElectriciteDAO {
 
     public CompteurElectricite save(CompteurElectricite compteur) {
         em.persist(compteur);
-        em.flush();
+        em.flush(); // ⚡ génère l'ID immédiatement
         return compteur;
     }
 
@@ -41,6 +44,8 @@ public class CompteurElectriciteDAO {
             if (compteur.getLatitude() != null) existing.setLatitude(compteur.getLatitude());
             if (compteur.getLongitude() != null) existing.setLongitude(compteur.getLongitude());
             if (compteur.getPhoto() != null) existing.setPhoto(compteur.getPhoto());
+            if (compteur.getStatut() != null) existing.setStatut(compteur.getStatut());
+            if (compteur.getSecteur() != null) existing.setSecteur(compteur.getSecteur()); // ✅ ajout
             em.merge(existing);
         }
     }
@@ -65,5 +70,30 @@ public class CompteurElectriciteDAO {
     public void delete(Long id) {
         CompteurElectricite c = findById(id);
         if (c != null) em.remove(c);
+    }
+
+    // -------------------------
+    // Méthodes de filtrage
+    // -------------------------
+    public List<CompteurElectricite> findBySecteur(Long secteurId) {
+        return em.createQuery(
+            "SELECT c FROM CompteurElectricite c WHERE c.secteur.id = :secteurId", CompteurElectricite.class)
+            .setParameter("secteurId", secteurId)
+            .getResultList();
+    }
+
+    public List<CompteurElectricite> findByStatut(String statut) {
+        return em.createQuery(
+            "SELECT c FROM CompteurElectricite c WHERE c.statut = :statut", CompteurElectricite.class)
+            .setParameter("statut", statut)
+            .getResultList();
+    }
+
+    public List<CompteurElectricite> findBySecteurAndStatut(Long secteurId, String statut) {
+        return em.createQuery(
+            "SELECT c FROM CompteurElectricite c WHERE c.secteur.id = :secteurId AND c.statut = :statut", CompteurElectricite.class)
+            .setParameter("secteurId", secteurId)
+            .setParameter("statut", statut)
+            .getResultList();
     }
 }
