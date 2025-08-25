@@ -1,6 +1,7 @@
 package ma.srm.srm.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.json.bind.annotation.JsonbTransient;
 import java.util.List;
 
 @Entity
@@ -17,14 +18,20 @@ public class Secteur {
     @Column(length = 100)
     private String ville = "Marrakech";
 
-    // Optionnel : liste des compteurs associés
+    // -------------------------
+    // Listes des compteurs associées
+    // -------------------------
     @OneToMany(mappedBy = "secteur")
+    @JsonbTransient // Ignorer la liste lors de la sérialisation JSON
     private List<CompteurEau> compteursEau;
 
     @OneToMany(mappedBy = "secteur")
+    @JsonbTransient
     private List<CompteurElectricite> compteursElectricite;
 
+    // -------------------------
     // Constructeurs
+    // -------------------------
     public Secteur() {}
 
     public Secteur(String nom, String ville) {
@@ -32,7 +39,9 @@ public class Secteur {
         this.ville = ville;
     }
 
+    // -------------------------
     // Getters & Setters
+    // -------------------------
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

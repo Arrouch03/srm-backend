@@ -5,10 +5,14 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import ma.srm.srm.backend.dao.CompteurEauDAO;
+import ma.srm.srm.backend.dao.SecteurDAO;
 import ma.srm.srm.backend.model.CompteurEau;
+import ma.srm.srm.backend.model.PositionUpdate;
+import ma.srm.srm.backend.model.Secteur;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
@@ -20,14 +24,15 @@ public class CompteurEauResource {
     @Inject
     private CompteurEauDAO dao;
 
+    @Inject
+    private SecteurDAO secteurDAO;
+
     // -------------------------
     // Liste de tous les compteurs sans photo
     // -------------------------
     @GET
     public List<CompteurEau> getAll() {
-        List<CompteurEau> list = dao.findAll();
-        list.forEach(c -> c.setPhoto(null)); // Exclure la photo
-        return list;
+        return makeSafeList(dao.findAll());
     }
 
     // -------------------------
@@ -36,7 +41,7 @@ public class CompteurEauResource {
     @GET
     @Path("/{id}")
     public CompteurEau getById(@PathParam("id") Long id) {
-        return dao.findById(id); // Photo incluse
+        return dao.findById(id);
     }
 
     // -------------------------
@@ -44,11 +49,22 @@ public class CompteurEauResource {
     // -------------------------
     @POST
     public Response create(CompteurEau compteur) {
-        if (compteur.getSecteur() == null) {
+        // Vérifie que l'ID du secteur est fourni
+        if (compteur.getSecteurId() == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Le secteur est obligatoire").build();
         }
+
+        // Récupère le secteur depuis la DB
+        Secteur secteurFromDB = secteurDAO.findById(compteur.getSecteurId());
+        if (secteurFromDB == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Secteur inexistant").build();
+        }
+
+        compteur.setSecteur(secteurFromDB);
         CompteurEau saved = dao.save(compteur);
+
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -76,8 +92,13 @@ public class CompteurEauResource {
     // -------------------------
     @PUT
     @Path("/{id}/position")
-    public void updatePosition(@PathParam("id") Long id, CompteurEau data) {
-        dao.updatePosition(id, data.getLatitude(), data.getLongitude());
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updatePosition(@PathParam("id") Long id, PositionUpdate pos) {
+        CompteurEau existing = dao.findById(id);
+        if (existing == null) return Response.status(Response.Status.NOT_FOUND).build();
+
+        dao.updatePosition(id, pos.getLatitude(), pos.getLongitude());
+        return Response.ok().build();
     }
 
     // -------------------------
@@ -112,9 +133,8 @@ public class CompteurEauResource {
     @Consumes(MediaType.TEXT_PLAIN)
     public Response updateStatut(@PathParam("id") Long id, String statut) {
         CompteurEau existing = dao.findById(id);
-        if (existing == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        if (existing == null) return Response.status(Response.Status.NOT_FOUND).build();
+
         existing.setStatut(statut);
         dao.update(existing);
         return Response.ok().build();
@@ -126,9 +146,7 @@ public class CompteurEauResource {
     @GET
     @Path("/secteur/{secteurId}")
     public List<CompteurEau> getBySecteur(@PathParam("secteurId") Long secteurId) {
-        List<CompteurEau> list = dao.findBySecteur(secteurId);
-        list.forEach(c -> c.setPhoto(null));
-        return list;
+        return makeSafeList(dao.findBySecteur(secteurId));
     }
 
     // -------------------------
@@ -137,9 +155,7 @@ public class CompteurEauResource {
     @GET
     @Path("/statut/{statut}")
     public List<CompteurEau> getByStatut(@PathParam("statut") String statut) {
-        List<CompteurEau> list = dao.findByStatut(statut);
-        list.forEach(c -> c.setPhoto(null));
-        return list;
+        return makeSafeList(dao.findByStatut(statut));
     }
 
     // -------------------------
@@ -149,8 +165,33 @@ public class CompteurEauResource {
     @Path("/secteur/{secteurId}/statut/{statut}")
     public List<CompteurEau> getBySecteurAndStatut(@PathParam("secteurId") Long secteurId,
                                                    @PathParam("statut") String statut) {
-        List<CompteurEau> list = dao.findBySecteurAndStatut(secteurId, statut);
-        list.forEach(c -> c.setPhoto(null));
-        return list;
+        return makeSafeList(dao.findBySecteurAndStatut(secteurId, statut));
+    }
+
+    // -------------------------
+    // Méthode utilitaire pour éviter les références cycliques JSON
+    // -------------------------
+    private List<CompteurEau> makeSafeList(List<CompteurEau> list) {
+        List<CompteurEau> safeList = new ArrayList<>();
+        for (CompteurEau c : list) {
+            CompteurEau copy = new CompteurEau();
+            copy.setId(c.getId());
+            copy.setNumero(c.getNumero());
+            copy.setDiametre(c.getDiametre());
+            copy.setDatePose(c.getDatePose());
+            copy.setLatitude(c.getLatitude());
+            copy.setLongitude(c.getLongitude());
+            copy.setPhoto(null);
+            copy.setStatut(c.getStatut());
+
+            if (c.getSecteur() != null) {
+                copy.setSecteur(new Secteur());
+                copy.getSecteur().setId(c.getSecteur().getId());
+                copy.getSecteur().setNom(c.getSecteur().getNom());
+            }
+
+            safeList.add(copy);
+        }
+        return safeList;
     }
 }

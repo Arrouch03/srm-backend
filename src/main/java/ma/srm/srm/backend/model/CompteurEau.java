@@ -1,6 +1,7 @@
 package ma.srm.srm.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.json.bind.annotation.JsonbTransient;
 import java.util.Date;
 
 @Entity
@@ -19,12 +20,10 @@ public class CompteurEau {
     @Column(name = "DATE_POSE")
     private Date datePose;
 
-    // Relation avec User
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    // Relation avec CompteurType
     @ManyToOne
     @JoinColumn(name = "type_id")
     private CompteurType type;
@@ -32,23 +31,22 @@ public class CompteurEau {
     private Double longitude;
     private Double latitude;
 
-    // Photo du compteur
     @Lob
     @Column(name = "PHOTO")
     private byte[] photo;
 
-    // Statut du compteur (ex: Normal, À contrôler, Frauduleux)
     @Column(name = "STATUT", length = 50)
     private String statut;
 
-    // Relation avec Secteur
     @ManyToOne
     @JoinColumn(name = "SECTEUR_ID")
+    @JsonbTransient
     private Secteur secteur;
 
-    // -------------------------
+    @Transient
+    private Long secteurId; // Pour réception JSON depuis le frontend
+
     // Constructeurs
-    // -------------------------
     public CompteurEau() {}
 
     public CompteurEau(String numero, Double diametre, Date datePose, User user, CompteurType type,
@@ -100,4 +98,7 @@ public class CompteurEau {
 
     public Secteur getSecteur() { return secteur; }
     public void setSecteur(Secteur secteur) { this.secteur = secteur; }
+
+    public Long getSecteurId() { return secteurId; }
+    public void setSecteurId(Long secteurId) { this.secteurId = secteurId; }
 }

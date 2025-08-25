@@ -1,6 +1,7 @@
 package ma.srm.srm.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.json.bind.annotation.JsonbTransient;
 import java.util.Date;
 
 @Entity
@@ -13,7 +14,7 @@ public class CompteurElectricite {
 
     @Column(nullable = false, length = 50)
     private String numero;
-    
+
     @Column(name = "NB_FILS")
     private Integer nbFils;
 
@@ -26,12 +27,10 @@ public class CompteurElectricite {
     @Column(name = "DATE_POSE")
     private Date datePose;
 
-    // Relation avec User
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    // Relation avec CompteurType
     @ManyToOne
     @JoinColumn(name = "type_id")
     private CompteurType type;
@@ -39,46 +38,25 @@ public class CompteurElectricite {
     private Double longitude;
     private Double latitude;
 
-    // Photo du compteur
     @Lob
     @Column(name = "PHOTO")
     private byte[] photo;
 
-    // Statut du compteur (ex: Normal, À contrôler, Frauduleux)
     @Column(name = "STATUT", length = 50)
     private String statut;
 
-    // Relation avec Secteur
     @ManyToOne
     @JoinColumn(name = "SECTEUR_ID")
+    @JsonbTransient // évite la sérialisation cyclique
     private Secteur secteur;
 
-    // -------------------------
+    @Transient
+    private Long secteurId; // pour réception JSON depuis le frontend
+
     // Constructeurs
-    // -------------------------
     public CompteurElectricite() {}
 
-    public CompteurElectricite(String numero, Integer nbFils, Integer nbRoues, String calibre,
-                               Date datePose, User user, CompteurType type,
-                               Double longitude, Double latitude, byte[] photo, String statut,
-                               Secteur secteur) {
-        this.numero = numero;
-        this.nbFils = nbFils;
-        this.nbRoues = nbRoues;
-        this.calibre = calibre;
-        this.datePose = datePose;
-        this.user = user;
-        this.type = type;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.photo = photo;
-        this.statut = statut;
-        this.secteur = secteur;
-    }
-
-    // -------------------------
     // Getters & Setters
-    // -------------------------
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -117,4 +95,7 @@ public class CompteurElectricite {
 
     public Secteur getSecteur() { return secteur; }
     public void setSecteur(Secteur secteur) { this.secteur = secteur; }
+
+    public Long getSecteurId() { return secteurId; }
+    public void setSecteurId(Long secteurId) { this.secteurId = secteurId; }
 }
